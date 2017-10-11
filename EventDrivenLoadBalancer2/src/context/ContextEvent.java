@@ -6,8 +6,8 @@ import events.EventType;
 public class ContextEvent extends Event{
 	private final ConnectionContext cc;
 	
-	public ContextEvent(String id, Object originator, EventType et, ConnectionContext cc) {
-		super(id, originator, et);
+	public ContextEvent(String id, Object originator, EventType et, boolean broadcast, ConnectionContext cc) {
+		super(id, originator, et, broadcast);
 		this.cc = cc;
 	}
 
