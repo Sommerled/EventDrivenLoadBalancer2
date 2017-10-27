@@ -21,12 +21,18 @@ public class EventHandler implements EventDispatcher, EventListener {
 
 	@Override
 	public Event peek() throws InterruptedException {
+		Event e = null;
 		
-		while(size() == 0){
-			this.wait();
+		while(e == null){
+			while(size() == 0){
+				synchronized(this){
+					wait();
+				}
+			}
+			e = this.eventQueue.peek();
 		}
 		
-		return this.eventQueue.peek();
+		return e;
 	}
 	
 	public synchronized int size(){

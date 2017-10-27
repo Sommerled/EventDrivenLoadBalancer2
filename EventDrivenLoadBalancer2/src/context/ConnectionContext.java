@@ -1,5 +1,8 @@
 package context;
 
+/**
+ * A simple container for storing connection information
+ */
 public class ConnectionContext {
 	private Integer timeout = 0;
 	private String host;
@@ -13,6 +16,7 @@ public class ConnectionContext {
 	private String keystoreType = "";
 	private String keyAlgorithm = "";
 	private HTTPContext http = null;
+	private int ballances = 0;
 	
 	public ConnectionContext(){
 		
@@ -27,6 +31,32 @@ public class ConnectionContext {
 		this.algorithm = algorithm;
 		this.protocol = protocol;
 		this.listensFor = listensFor;
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		boolean ret = false;
+		
+		if(this == o){
+			return true;
+		}
+		
+		if(o instanceof ConnectionContext){
+			ConnectionContext cc = (ConnectionContext)o;
+			
+			ret = this.host.equals(cc.getAlgorithm()) && this.port.equals(cc.getPort());
+			ret = ret && this.algorithm.equals(cc.getAlgorithm()) && this.protocol.equals(cc.getProtocol());
+			ret = ret && this.keystorePath.equals(cc.getKeystorePath()) && this.keystorePassword.equals(cc.getKeystorePassword());
+			ret = ret && this.keystoreType.equals(cc.keystoreType) && this.keyAlgorithm.equals(cc.getKeyAlgorithm());
+			
+			if(this.listensFor != null && cc.getListensFor() != null){
+				ret = ret && this.listensFor.equals(cc.getListensFor());
+			}else if(this.listensFor != null || cc.getListensFor() != null){
+				return false;
+			}
+		}
+		
+		return ret;
 	}
 	
 	public void setTimeout(Integer timeout){
@@ -73,6 +103,12 @@ public class ConnectionContext {
 		this.listening = listening;
 	}
 	
+	/**
+	 * Returns whether or not this context
+	 * is meant for listening on a port instead
+	 * of sending to one.
+	 * @return
+	 */
 	public boolean getListening(){
 		return this.listening;
 	}
@@ -81,6 +117,11 @@ public class ConnectionContext {
 		this.listensFor = listensFor;
 	}
 	
+	/**
+	 * Returns the the context from which the current
+	 * context receives messages.
+	 * @return
+	 */
 	public ConnectionContext getListensFor(){
 		return this.listensFor;
 	}
@@ -123,5 +164,13 @@ public class ConnectionContext {
 	
 	public HTTPContext getHttpContext(){
 		return this.http;
+	}
+	
+	public void setBalances(int ballances){
+		this.ballances = ballances;
+	}
+	
+	public int getBalances(){
+		return this.ballances;
 	}
 }

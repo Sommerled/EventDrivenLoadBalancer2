@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Connections>
+	<Connection>
+		<Host>localhost</Host>
+		<Port>9000</Port>
+		<Timeout>60000</Timeout>
+		<Protocol>SSL</Protocol>
+		<Algorithm>Round Robin</Algorithm>
+		<Listening>true</Listening>
+		<keystore>
+			<store>test_store</store>
+			<password>changeit</password>
+			<type>JKS</type>
+			<KeyAlgorithm>SunX509</KeyAlgorithm>
+		</keystore>
+		<Connections>
+			<Connection>
+				<Host>localhost</Host>
+				<Port>9001</Port>
+				<Timeout>60000</Timeout>
+				<Protocol>SSL</Protocol>
+				<Listening>false</Listening>
+			</Connection>
+			<Connection>
+				<Host>localhost</Host>
+				<Port>9002</Port>
+				<Timeout>60000</Timeout>
+				<Protocol>SSL</Protocol>
+				<Listening>false</Listening>
+			</Connection>
+		</Connections>
+	</Connection>
+</Connections>

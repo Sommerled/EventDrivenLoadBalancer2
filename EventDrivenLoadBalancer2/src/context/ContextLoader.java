@@ -58,6 +58,7 @@ public class ContextLoader {
 					if(ContextNodes.CONNECTION.equals(connections.item(j).getNodeName())){
 						ConnectionContext childContext = processContextNode(connections.item(j), keystorePath);
 						childContext.setListensFor(context);
+						context.setBalances(context.getBalances() + 1);
 					}
 				}
 				break;
