@@ -9,6 +9,10 @@ import context.ContextLoader;
 import eventHandler.EventHandler;
 import events.EventType;
 import workerCreation.WorkerCreationService;
+/**
+ * This class starts all the necessary
+ * services for load balancing
+ */
 public class Server {
 	private EventHandler handler = null;
 	private IDGenerationService igs = null;
@@ -19,6 +23,9 @@ public class Server {
 		init();
 	}
 	
+	/**
+	 * Initializes services
+	 */
 	public void init(){
 		this.handler = new EventHandler();
 		

@@ -1,7 +1,9 @@
 package server;
 
 import context.ContextLoader;
-
+/**
+ * This class is for launching the load balancing server
+ */
 public class ServerMain {
 
 	public static void main(String[] args) {

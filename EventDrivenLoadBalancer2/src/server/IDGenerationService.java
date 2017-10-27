@@ -8,6 +8,9 @@ import events.IntEvent;
 import events.StringEvent;
 import events.StringListEvent;
 
+/**
+ * The service for using the <IDGenerator> object
+ */
 public class IDGenerationService extends Service{
 	private IDGenerator generator = null;
 
@@ -17,6 +20,11 @@ public class IDGenerationService extends Service{
 		this.generator = new IDGenerator();
 	}
 	
+	/**
+	 * Determines which action to take, depending
+	 * upon the event that was pulled off of the
+	 * event queue via the listener.
+	 */
 	@Override
 	public void run() {
 		while(true){

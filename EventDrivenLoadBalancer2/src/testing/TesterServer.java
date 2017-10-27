@@ -12,6 +12,7 @@ import java.net.Socket;
  * A simple service for testing
  * plain socket server connections
  *
+ * arg[0] = port
  */
 public class TesterServer {
 

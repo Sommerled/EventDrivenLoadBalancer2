@@ -3,6 +3,11 @@ package server;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class for generating ever expanding id's, such that 
+ * the more id's that are requested, the larger that
+ * they become.
+ */
 public class IDGenerator {
 	private static final String INCREMENT = "-BAAAAAAA"; 
 	private List<String> freedIds = null;
@@ -15,6 +20,9 @@ public class IDGenerator {
 		this.freedIds = new ArrayList<String>();
 	}
 	
+	/**
+	 * Generates a new ID
+	 */
 	private String getNewID(){
 		String retID = new String(this.ID);
 		
@@ -44,6 +52,10 @@ public class IDGenerator {
 		return retID;
 	}
 	
+	/**
+	 * Generates or retrieves an existing ID
+	 * @return
+	 */
 	public String getFreeID(){
 		String retID = "";
 		
@@ -57,6 +69,12 @@ public class IDGenerator {
 		return retID;
 	}
 	
+	/**
+	 * Returns a group of ID's
+	 * 
+	 * @param num
+	 * @return
+	 */
 	public List<String> getBatchIDs(int num){
 		List<String> IDs = new ArrayList<String>();
 		
@@ -67,6 +85,11 @@ public class IDGenerator {
 		return IDs;
 	}
 	
+	/**
+	 * registers an ID that has been freed
+	 * 
+	 * @param freed
+	 */
 	public void addFreeID(String freed){
 		freedIds.add(freed);
 	}
