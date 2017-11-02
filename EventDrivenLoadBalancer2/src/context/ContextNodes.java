@@ -1,5 +1,10 @@
 package context;
 
+/**
+ * A list of public global constant strings
+ * that identify xml nodes that can be used
+ * to build a <ConnectionContext> object.
+ */
 public class ContextNodes {
 	public static final String CONNECTIONS = "Connections";
 	public static final String CONNECTION = "Connection";

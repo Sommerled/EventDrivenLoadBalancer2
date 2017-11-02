@@ -3,6 +3,10 @@ package context;
 import events.Event;
 import events.EventType;
 
+/**
+ * The event object for sending <ConnectionContext>s to
+ * the event queue.
+ */
 public class ContextEvent extends Event{
 	private final ConnectionContext cc;
 	

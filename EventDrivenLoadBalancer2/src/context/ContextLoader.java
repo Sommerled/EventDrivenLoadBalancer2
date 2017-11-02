@@ -19,6 +19,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+/**
+ * Loads contexts from a configuration file
+ **/
 public class ContextLoader {
 	private static List<ConnectionContext> contexts;
 	
@@ -26,6 +29,16 @@ public class ContextLoader {
 		return contexts;
 	}
 	
+	/**
+	 * Loads contexts from a configuration file
+	 * 
+	 * @param fileName
+	 * @param keystorePath
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws XPathExpressionException
+	 */
 	public static void loadContexts(String fileName, String keystorePath) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException{
 		File inputFile = new File(fileName);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -45,6 +58,14 @@ public class ContextLoader {
         }
 	}
 	
+	/**
+	 * Processes an xml node and converts 
+	 * it into a <ConnectionContext>
+	 * 
+	 * @param n
+	 * @param keystorePath
+	 * @return
+	 */
 	public static ConnectionContext processContextNode(Node n, String keystorePath){
 		ConnectionContext context = new ConnectionContext();
 		NodeList children = n.getChildNodes();

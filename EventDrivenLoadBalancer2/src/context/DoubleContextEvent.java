@@ -3,6 +3,10 @@ package context;
 import events.Event;
 import events.EventType;
 
+/**
+ * An event for passing two <ConnectionContext>
+ * objects to the event queue.
+ */
 public class DoubleContextEvent extends Event{
 	private final ConnectionContext c1;
 	private final ConnectionContext c2;

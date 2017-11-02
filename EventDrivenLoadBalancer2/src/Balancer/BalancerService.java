@@ -9,7 +9,13 @@ import events.Event;
 import events.EventType;
 import server.Service;
 import server.socketWorkers.SocketContextEvent;
-
+/**
+ * This service uses the <Balancer> class
+ * to register new <ConnectionContext>s and
+ * to get the next <ConnectionContext> that
+ * will handle directing traffic for a new
+ * connection.
+ */
 public class BalancerService extends Service{
 	private final Balancer balancingAct; //Ha ha
 	

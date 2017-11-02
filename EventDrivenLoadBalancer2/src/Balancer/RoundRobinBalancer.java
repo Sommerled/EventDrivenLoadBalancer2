@@ -5,6 +5,16 @@ import java.util.LinkedList;
 
 import context.ConnectionContext;
 
+/** 
+ * A balancing object that balances according
+ * to the Round Robin algorithm. In another
+ * word, it has a list of <ConnectionContext>s
+ * and gives the next <ConnectionContext> in the
+ * list, returning to the beginning of the list
+ * if the end has been reached, to handle a new
+ * connection that originates from a server socket.
+ *
+ */
 public class RoundRobinBalancer implements ConnectionBallancer{
 	private LinkedList<ConnectionContext> connections = null;
 	private Iterator<ConnectionContext> iter = null;
