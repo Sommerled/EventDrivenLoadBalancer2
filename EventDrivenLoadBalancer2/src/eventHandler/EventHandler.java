@@ -4,6 +4,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import events.Event;
 
+/**
+ * This object stores events in a <LinkedBlockingQueue> 
+ * until they are removed by services that are listening 
+ * for events. 
+ */
 public class EventHandler implements EventDispatcher, EventListener {
 	private LinkedBlockingQueue<Event> eventQueue = null;
 	
@@ -35,6 +40,11 @@ public class EventHandler implements EventDispatcher, EventListener {
 		return e;
 	}
 	
+	/**
+	 * Returns the number of events on the
+	 * <LinkedBlockingQueue>
+	 * @return
+	 */
 	public synchronized int size(){
 		return this.eventQueue.size();
 	}
