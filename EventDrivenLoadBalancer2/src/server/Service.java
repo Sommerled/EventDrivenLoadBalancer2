@@ -50,4 +50,6 @@ public abstract class Service implements EventDispatcherAware, EventListenerAwar
 	public void setEventDispatcher(EventDispatcher eventDispatcher) {
 		this.dispatcher = eventDispatcher;
 	}
+	
+	
 }

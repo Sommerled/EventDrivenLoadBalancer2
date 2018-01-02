@@ -1,5 +1,7 @@
 package eventHandler;
 
+import java.util.List;
+
 import events.Event;
 
 /**
@@ -7,18 +9,16 @@ import events.Event;
  * on the event queue.
  */
 public interface EventListener {
-	/**
-	 * Checks what the top event on the event queue is
-	 * @return
-	 * @throws InterruptedException
-	 */
-	public Event peek() throws InterruptedException;
 	
 	/**
-	 * Removes an event off of the event queue
-	 * @param e
+	 * Returns a list of all events that tester.TestType 
+	 * declares to have a valid <EventType> and <null>
+	 * if no valid events were found.
+	 * 
+	 * @param tester
 	 * @return
+	 * @throws InterruptedException 
 	 */
-	public boolean remove(Event e);
+	public List<Event> getAllEvents(EventTypeTester tester) throws InterruptedException;
 
 }

@@ -1,5 +1,9 @@
 package eventHandler;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import events.Event;
@@ -10,48 +14,52 @@ import events.Event;
  * for events. 
  */
 public class EventHandler implements EventDispatcher, EventListener {
-	private LinkedBlockingQueue<Event> eventQueue = null;
+	private List<Event> eventList = null;
 	
 	public EventHandler(){
-		this.eventQueue = new LinkedBlockingQueue<Event>();
+		this.eventList = Collections.synchronizedList(new LinkedList<Event>()) ;
 	}
 
 	@Override
 	public void put(Event e) throws InterruptedException {
-		this.eventQueue.put(e);
+		this.eventList.add(e);
 		synchronized(this){
 			this.notifyAll();
 		}
 	}
-
-	@Override
-	public Event peek() throws InterruptedException {
-		Event e = null;
-		
-		while(e == null){
-			while(size() == 0){
-				synchronized(this){
-					wait();
-				}
-			}
-			e = this.eventQueue.peek();
-		}
-		
-		return e;
-	}
 	
 	/**
 	 * Returns the number of events on the
-	 * <LinkedBlockingQueue>
+	 * <LinkedList>
 	 * @return
 	 */
 	public synchronized int size(){
-		return this.eventQueue.size();
+		return this.eventList.size();
 	}
 
 	@Override
-	public boolean remove(Event e) {
-		return this.eventQueue.remove(e);
+	public synchronized List<Event> getAllEvents(EventTypeTester tester) throws InterruptedException {
+		
+		while(size() == 0){
+				wait();
+		}
+		
+		Iterator<Event> iter = this.eventList.iterator();
+		List<Event> events = new LinkedList<Event>();
+		while(iter.hasNext()){
+			Event e = iter.next();
+			
+			if(tester.TestType(e.getEventType())){
+				events.add(e);
+				iter.remove();
+			}
+		}
+		
+		if(events.size() == 0){
+			events = null;
+		}
+		
+		return events;
 	}
 	
 	

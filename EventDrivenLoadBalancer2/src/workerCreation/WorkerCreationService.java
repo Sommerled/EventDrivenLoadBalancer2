@@ -9,57 +9,55 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import context.ContextEvent;
 import eventHandler.EventDispatcher;
 import eventHandler.EventListener;
+import eventHandler.EventTypeTester;
 import events.Event;
 import events.EventType;
 import server.Service;
+import server.ServiceWorker;
 import server.socketWorkers.LbSocketFactory;
 import server.socketWorkers.ServerSocketService;
 import server.socketWorkers.SocketContextEvent;
 import server.socketWorkers.SocketWorker;
 
-public class WorkerCreationService extends Service{
-
+public class WorkerCreationService extends ServiceWorker {
+	
 	public WorkerCreationService(EventListener listener, EventDispatcher dispatcher) {
-		super(listener, dispatcher);
+		super(listener, dispatcher, 
+				(EventType phoneHome)->{
+					return (phoneHome.equals(EventType.BALANCE_RESPONSE) || 
+							phoneHome.equals(EventType.NEW_SERVER_SOCKET_SERVICE));
+				}
+		);
 	}
 
 	@Override
-	public void run() {
-		while(true){
-			try {
-				Event event = this.getEventListener().peek();
-				
-				switch(event.getEventType()){
-				case BALANCE_RESPONSE:
-					if(this.getEventListener().remove(event)){
-						createSession(event);
-					}
-					break;
-				case NEW_SERVER_SOCKET_SERVICE:
-					if(this.getEventListener().remove(event)){
-						ContextEvent ce = (ContextEvent)event;
-						
-						ServerSocketService sss = new ServerSocketService(this.getEventListener(), this.getEventDispatcher(),
-								ce.getContext());
-						
-						Thread portListener = new Thread(sss);
-						portListener.start();
-					}
-					break;
-				default:
-					break;
-				}
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	protected void process(Event e) {
+		switch(e.getEventType()){
+		case BALANCE_RESPONSE:
+			createSession(e);
+			break;
+		case NEW_SERVER_SOCKET_SERVICE:
+			ContextEvent ce = (ContextEvent)e;
+			
+			ServerSocketService sss = new ServerSocketService(this.getEventListener(), this.getEventDispatcher(),
+					ce.getContext());
+			
+			Thread portListener = new Thread(sss);
+			portListener.start();
+			ce = null;
+			break;
+		default:
+			break;
 		}
 		
+		e = null;
 	}
 	
 	private void createSession(Event event){

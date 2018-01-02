@@ -11,52 +11,44 @@ import events.StringListEvent;
 /**
  * The service for using the <IDGenerator> object
  */
-public class IDGenerationService extends Service{
+public class IDGenerationService extends ServiceWorker{
 	private IDGenerator generator = null;
 
 	public IDGenerationService(EventListener listener, EventDispatcher dispatcher) {
-		super(listener, dispatcher);
+		super(listener, dispatcher, 
+				(EventType phoneHome)->{
+					return (phoneHome.equals(EventType.NEW_ID) || 
+							phoneHome.equals(EventType.BATCH_IDS)||
+							phoneHome.equals(EventType.FREED_ID));
+				}
+		);
 		
 		this.generator = new IDGenerator();
 	}
-	
-	/**
-	 * Determines which action to take, depending
-	 * upon the event that was pulled off of the
-	 * event queue via the listener.
-	 */
+
 	@Override
-	public void run() {
-		while(true){
-			try {
-				Event request = this.getEventListener().peek();
-				Event response = null;
-				EventType et = request.getEventType();
-				
-				if(et == EventType.NEW_ID || et == EventType.BATCH_IDS || et == EventType.FREED_ID){
-					if(this.getEventListener().remove(request)){
-						switch(request.getEventType()){
-						case NEW_ID:
-							response = new StringEvent(null, this, EventType.RESPONSE_ID, false, this.generator.getFreeID());
-							this.getEventDispatcher().put(response);
-							break;
-						case BATCH_IDS:
-							int num = ((IntEvent)request).getValue();
-							response = new StringListEvent(null, this, EventType.RESPONSE_ID, false, this.generator.getBatchIDs(num));
-							this.getEventDispatcher().put(response);
-							break;
-						case FREED_ID:
-							String freedID = ((StringEvent)request).getValue();
-							this.generator.addFreeID(freedID);
-							break;
-						default:
-							break;
-						}
-					}
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+	protected void process(Event e) {
+		Event response = null;
+		try {
+			switch(e.getEventType()){
+			case NEW_ID:
+				response = new StringEvent(null, this, EventType.RESPONSE_ID, false, this.generator.getFreeID());
+				this.getEventDispatcher().put(response);
+				break;
+			case BATCH_IDS:
+				int num = ((IntEvent)e).getValue();
+				response = new StringListEvent(null, this, EventType.RESPONSE_ID, false, this.generator.getBatchIDs(num));
+				this.getEventDispatcher().put(response);
+				break;
+			case FREED_ID:
+				String freedID = ((StringEvent)e).getValue();
+				this.generator.addFreeID(freedID);
+				break;
+			default:
+				break;
 			}
+		} catch (InterruptedException ex) {
+			ex.printStackTrace();
 		}
 	}
 
