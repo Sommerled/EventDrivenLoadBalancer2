@@ -1,7 +1,7 @@
 package events;
 
 public class Event {
-	private final Object originator;
+	private Object originator;
 	private final String id;
 	private final EventType et; //phone home
 	private final boolean broadcast;
@@ -19,6 +19,10 @@ public class Event {
 	
 	public Object getOriginator(){
 		return this.getOriginator();
+	}
+	
+	public Object setOriginator(Object originator){
+		return this.originator = originator;
 	}
 	
 	public EventType getEventType(){

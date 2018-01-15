@@ -20,6 +20,7 @@ import eventHandler.EventTypeTester;
 import events.Event;
 import events.EventType;
 import server.Service;
+import server.ServiceFactory;
 import server.ServiceWorker;
 import server.socketWorkers.LbSocketFactory;
 import server.socketWorkers.ServerSocketService;
@@ -28,12 +29,13 @@ import server.socketWorkers.SocketWorker;
 
 public class WorkerCreationService extends ServiceWorker {
 	
-	public WorkerCreationService(EventListener listener, EventDispatcher dispatcher) {
+	public WorkerCreationService(EventListener listener, EventDispatcher dispatcher, String ID) {
 		super(listener, dispatcher, 
 				(EventType phoneHome)->{
 					return (phoneHome.equals(EventType.BALANCE_RESPONSE) || 
 							phoneHome.equals(EventType.NEW_SERVER_SOCKET_SERVICE));
-				}
+				},
+				ID
 		);
 	}
 
@@ -50,6 +52,7 @@ public class WorkerCreationService extends ServiceWorker {
 					ce.getContext());
 			
 			Thread portListener = new Thread(sss);
+			portListener.setName("Balanced Service");
 			portListener.start();
 			ce = null;
 			break;
@@ -100,5 +103,4 @@ public class WorkerCreationService extends ServiceWorker {
 			e.printStackTrace();
 		}
 	}
-
 }

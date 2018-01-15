@@ -14,16 +14,17 @@ import events.StringListEvent;
 public class IDGenerationService extends ServiceWorker{
 	private IDGenerator generator = null;
 
-	public IDGenerationService(EventListener listener, EventDispatcher dispatcher) {
+	public IDGenerationService(EventListener listener, EventDispatcher dispatcher, String ID, IDGenerator generator) {
 		super(listener, dispatcher, 
 				(EventType phoneHome)->{
 					return (phoneHome.equals(EventType.NEW_ID) || 
 							phoneHome.equals(EventType.BATCH_IDS)||
 							phoneHome.equals(EventType.FREED_ID));
-				}
+				},
+			ID
 		);
 		
-		this.generator = new IDGenerator();
+		this.generator = generator;
 	}
 
 	@Override

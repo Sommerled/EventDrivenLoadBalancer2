@@ -1,59 +1,59 @@
 package server;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
-import Balancer.BalancerService;
-import context.ConnectionContext;
-import context.ContextEvent;
-import context.ContextLoader;
 import eventHandler.EventHandler;
-import events.EventType;
-import workerCreation.WorkerCreationService;
+import events.Event;
+
 /**
- * This class starts all the necessary
- * services for load balancing
+ * This class starts all the services that were
+ * passed into it via the <serviceMap> parameter
+ * in it's constructor. This was purposely built
+ * with an inversion of control philosophy to
+ * enable a more efficient testing approach.
  */
 public class Server {
 	private EventHandler handler = null;
-	private IDGenerationService igs = null;
-	private BalancerService balancer = null;
-	private WorkerCreationService workerCreationService = null;
+	private boolean stayAlive = true;
 	
-	public Server(){
-		init();
+	public Server(Map<String, ServiceFactory> serviceMap, List<Event>initialEvents){
+		init(serviceMap, initialEvents);
 	}
 	
 	/**
-	 * Initializes services
+	 * Initializes services and adds all initial events
+	 * to the event handler
 	 */
-	public void init(){
+	private void init(Map<String, ServiceFactory> serviceMap, List<Event>initialEvents){
 		this.handler = new EventHandler();
+		ConcurrentLinkedDeque<String> IDList = new ConcurrentLinkedDeque();
 		
-		this.igs = new IDGenerationService(this.handler, this.handler);
-		Thread igsThread = new Thread(this.igs);
-		igsThread.setName("ID Generator");
-		igsThread.start();
+		Set<String> keys = serviceMap.keySet();
+		for(String k : keys){
+			ServiceFactory sf = serviceMap.get(k);
+			Service service = sf.CreateService(this.handler, this.handler);
+			IDList.add(((ServiceWorker)service).getID());
+			Thread serviceThread = new Thread(service);
+			serviceThread.setName(k);
+			serviceThread.start();
+		}
 		
-		this.balancer = new BalancerService(this.handler, this.handler);
-		Thread balancerThread = new Thread(this.balancer);
-		balancerThread.setName("Balancing Act");
-		balancerThread.start();
+		ServiceFactoriesController sfc = new ServiceFactoriesController(serviceMap, this.handler, this.handler);
 		
-		this.workerCreationService = new WorkerCreationService(this.handler, this.handler);
-		Thread CreationThread = new Thread(this.workerCreationService);
-		CreationThread.setName("Creation");
-		CreationThread.start();
-		
-		List<ConnectionContext> contexts = ContextLoader.getLoadedContexts();
-		for(int i = 0; i < contexts.size(); i++){
-			ContextEvent ce = new ContextEvent(null, this, EventType.NEW_CONNECTION, false, contexts.get(i));
-			
+		for(int i = 0; i < initialEvents.size(); i++){
+			Event event = initialEvents.get(i);
 			try {
-				this.handler.put(ce);
+				event.setOriginator(this);
+				this.handler.put(event);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			
 		}
+		
+		
 	}
 }

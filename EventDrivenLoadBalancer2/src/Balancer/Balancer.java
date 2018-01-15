@@ -66,6 +66,10 @@ public class Balancer {
 							}
 						}
 					}
+					
+					if(cb.needsContext()){
+						needsContext.add(new WaitingAdapter(cc, cb));
+					}
 				}
 			}else{
 				boolean balanced = false;
@@ -73,6 +77,7 @@ public class Balancer {
 				for(WaitingAdapter wa : needsContext){
 					if(wa.alert(cc) && wa.done()){
 						needsContext.remove(wa);
+						wa = null;
 						balanced = true;
 						break;
 					}

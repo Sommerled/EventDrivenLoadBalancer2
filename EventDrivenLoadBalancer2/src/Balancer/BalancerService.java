@@ -20,12 +20,13 @@ import server.socketWorkers.SocketContextEvent;
 public class BalancerService extends ServiceWorker{
 	private final Balancer balancingAct; //Ha ha
 	
-	public BalancerService(EventListener listener, EventDispatcher dispatcher) {
+	public BalancerService(EventListener listener, EventDispatcher dispatcher, String ID) {
 		super(listener, dispatcher, 
 				(EventType phoneHome)->{
 					return (phoneHome.equals(EventType.NEW_CONNECTION) || 
 							phoneHome.equals(EventType.BALANCE_REQUEST));
-				}
+				},
+				ID
 		);
 		this.balancingAct = new Balancer();
 	}
