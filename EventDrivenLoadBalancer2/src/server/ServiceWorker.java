@@ -24,7 +24,7 @@ public abstract class ServiceWorker extends Service{
 	public void run() {
 		List<Event> events = null;
 		
-		while(true){
+		while(!Thread.currentThread().isInterrupted()){
 			try {
 				events = this.getEventListener().getAllEvents(tester);
 				if(events != null){

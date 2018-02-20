@@ -1,7 +1,12 @@
 package server;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * A class for generating ever expanding id's, such that 
@@ -9,47 +14,57 @@ import java.util.List;
  * they become.
  */
 public class IDGenerator {
-	private static final String INCREMENT = "-BAAAAAAA"; 
 	private List<String> freedIds = null;
-	private char thresh = 'Q';
-	private int pos = 0;
-	private String baseID = "";
-	private char[] ID = {'A', 'A', 'A', 'A','A','A','A','A'};
+	private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 	
 	public IDGenerator(){
-		this.freedIds = new ArrayList<String>();
+		this.freedIds = new LinkedList<String>();
 	}
 	
 	/**
-	 * Generates a new ID
+	 * Generates a SHA-256 hashed UUID.
+	 * Created with help from http://www.baeldung.com/java-uuid
+	 * 
+	 * In theory it would take making 1 billion UUIDs every second
+	 * for 100 years before a 50% chance of a collision (duplicate ID) 
+	 * would be achieved.
+	 * 
+	 * @return
 	 */
-	private String getNewID(){
-		String retID = new String(this.ID);
+	private String sha_256_UUID(){
+		String retID = "";
 		
-		this.ID[0]++;
-		
-		if(this.ID[0] > thresh){
-			this.ID[0] = 'A';
-			int pos = 1;
-			while(pos < this.ID.length){
-				this.ID[pos]++;
-				if(this.ID[pos] <= thresh){
-					break;
-				}
-				
-				this.ID[pos] = 'A';
-				pos++;
-			}
-			
-			if(this.ID[pos-1] == 'A'){
-				String newID = new String(this.ID);
-				newID = newID + INCREMENT;
-				
-				this.ID = newID.toCharArray();
-			}
+		try {
+			MessageDigest salt = MessageDigest.getInstance("SHA-256");
+			salt.update(UUID.randomUUID().toString().getBytes("UTF-8"));
+			retID = bytesToHex(salt.digest());
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return retID;
+	}
+	
+	/**
+	 * Converts a byte array to a hex string.
+	 * Taken from:
+	 * https://stackoverflow.com/questions/9655181/how-to-convert-a-byte-array-to-a-hex-string-in-java
+	 * 
+	 * @param bytes
+	 * @return
+	 */
+	private String bytesToHex(byte[] bytes) {
+	    char[] hexChars = new char[bytes.length * 2];
+	    for ( int j = 0; j < bytes.length; j++ ) {
+	        int v = bytes[j] & 0xFF;
+	        hexChars[j * 2] = hexArray[v >>> 4];
+	        hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+	    }
+	    return new String(hexChars);
 	}
 	
 	/**
@@ -63,7 +78,7 @@ public class IDGenerator {
 			retID = freedIds.get(0);
 			freedIds.remove(0);
 		}else{
-			retID = getNewID();
+			retID = sha_256_UUID();
 		}
 		
 		return retID;
@@ -75,10 +90,10 @@ public class IDGenerator {
 	 * @param num
 	 * @return
 	 */
-	public List<String> getBatchIDs(int num){
-		List<String> IDs = new ArrayList<String>();
+	public List<String> getBatchIDs(long num){
+		LinkedList<String> IDs = new LinkedList<String>();
 		
-		for(int i = 0; i < num; i++){
+		for(long i = 0; i < num; i++){
 			IDs.add(getFreeID());
 		}
 		

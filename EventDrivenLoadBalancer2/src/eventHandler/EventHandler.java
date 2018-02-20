@@ -15,6 +15,7 @@ import events.Event;
  */
 public class EventHandler implements EventDispatcher, EventListener {
 	private List<Event> eventList = null;
+	private boolean release = false;
 	
 	public EventHandler(){
 		this.eventList = Collections.synchronizedList(new LinkedList<Event>()) ;
@@ -46,12 +47,15 @@ public class EventHandler implements EventDispatcher, EventListener {
 		
 		Iterator<Event> iter = this.eventList.iterator();
 		List<Event> events = new LinkedList<Event>();
-		while(iter.hasNext()){
-			Event e = iter.next();
-			
-			if(tester.TestType(e.getEventType())){
-				events.add(e);
-				iter.remove();
+		
+		if(!this.release){
+			while(iter.hasNext()){
+				Event e = iter.next();
+				
+				if(tester.TestType(e.getEventType())){
+					events.add(e);
+					iter.remove();
+				}
 			}
 		}
 		
@@ -62,5 +66,8 @@ public class EventHandler implements EventDispatcher, EventListener {
 		return events;
 	}
 	
-	
+	public synchronized void setRelease(boolean r){
+		this.release = r;
+		this.notifyAll();
+	}
 }
