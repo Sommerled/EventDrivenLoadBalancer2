@@ -137,7 +137,7 @@ public class LbSocketFactory {
 		if("None".equals(c.getProtocol())){
 			s = new Socket(c.getHost(), c.getPort());
 		}else{
-			s = createSSLSocket(c.getHost(), c.getPort(), c.getKeystorePath(), c.getKeystoreType(), c.getKeystorePassword(), c.getAlgorithm(), c.getProtocol());
+			s = createSSLSocket(c.getHost(), c.getPort(), c.getKeystorePath(), c.getKeystoreType(), c.getKeystorePassword(), c.getKeyAlgorithm(), c.getProtocol());
 		}
 		
 		return s;
